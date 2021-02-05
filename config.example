@@ -1,0 +1,21 @@
+token: TOKEN
+contact: CONTACT-UID
+
+message: |
+  Hi <@{uids[0]}> and <@{uids[1]}>!  You've been paired for a social 1:1 this week.  Go ahead and set up a half-hour call at a time that works for both of you!
+
+  Contact <@{contact}> to unsubscribe.
+message-extra: |
+  Hi <@{uids[0]}>, <@{uids[1]}>, and <@{uids[2]}>!  You've been grouped for a social 1:1:1 this week.  (We have an odd number of participants this time.)  Go ahead and set up a half-hour call at a time that works for each of you!
+
+  Contact <@{contact}> to unsubscribe.
+message-lonely: |
+  Hi <@{uids[0]}>!  There's no one else to pair you with this week.  :disappointed:  I'll try again next week.
+
+  Contact <@{contact}> to unsubscribe.
+
+participants:
+  - uid: UID
+  - uid: UID
+  - uid: UID
+    cadence: 2

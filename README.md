@@ -25,6 +25,7 @@ token: <API token>
 contact: <uid>
 message: <message>
 message-extra: <message for 3 participants>
+message-lonely: <message if there's only one participant>
 participants:
   - uid: <uid>
     cadence: 2  # optional; weeks
@@ -32,5 +33,6 @@ participants:
 
 Message substitution variables:
 - `{contact}`: the configured contact UID
-- `{uids[0]}`, `{uids[1]}`: UIDs we're sending to
-- `{uids[2]}`: third UID for `message-extra`
+- `{uids[0]}`, `{uids[1]}`, `{uids[2]}`: UIDs we're sending to
+
+Use these in messages as e.g. `<@{contact}>`.

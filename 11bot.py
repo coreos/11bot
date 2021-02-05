@@ -61,7 +61,6 @@ def main():
         for p in config['participants']:
             if week % p.get('cadence', 1) == 0:
                 uids.append(p['uid'])
-        assert len(uids) > 1
         random.shuffle(uids)
 
         while uids:
@@ -71,10 +70,11 @@ def main():
                 curuids, uids = uids, []
             print(f'Sending to {curuids}')
 
-            message = config['message'].strip()
-            if len(curuids) == 3:
-                message = config.get('message-extra', message).strip()
-            message = message.format(
+            message = (
+                config['message-lonely'],
+                config['message'],
+                config['message-extra'],
+            )[len(curuids) - 1].strip().format(
                 contact=config['contact'],
                 uids=curuids,
             )

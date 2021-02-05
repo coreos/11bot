@@ -1,0 +1,2 @@
+# Run 1:1 bot every Monday morning
+0 9 * * 1 $HOME/11bot/env/bin/python $HOME/11bot/11bot.py

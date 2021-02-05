@@ -1,0 +1,36 @@
+# 1:1 bot
+
+## Installing
+
+A `setup.cfg` would be nice, but we don't have one right now.
+
+```sh
+cd ~
+git clone https://github.com/bgilbert/11bot
+cd 11bot
+virtualenv env
+env/bin/pip install -r requirements.txt
+crontab -l | cat - crontab.example | crontab -
+```
+
+You'll also need to set up a Slack app in your workspace and get an API
+token for it.
+
+## Config format
+
+Put this in `~/.11bot` by default.
+
+```yaml
+token: <API token>
+contact: <uid>
+message: <message>
+message-extra: <message for 3 participants>
+participants:
+  - uid: <uid>
+    cadence: 2  # optional; weeks
+```
+
+Message substitution variables:
+- `{contact}`: the configured contact UID
+- `{uids[0]}`, `{uids[1]}`: UIDs we're sending to
+- `{uids[2]}`: third UID for `message-extra`

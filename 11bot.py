@@ -16,6 +16,17 @@ def get_week():
     return delta.days // 7
 
 
+def draw(uids):
+    uids = list(uids)
+    random.shuffle(uids)
+    while uids:
+        if len(uids) > 3:
+            curuids, uids = uids[:2], uids[2:]
+        else:
+            curuids, uids = uids, []
+        yield curuids
+
+
 def dry_run(message):
     print(f'---\n{message}\n---')
 
@@ -61,13 +72,8 @@ def main():
         for p in config['participants']:
             if week % p.get('cadence', 1) == 0:
                 uids.append(p['uid'])
-        random.shuffle(uids)
 
-        while uids:
-            if len(uids) > 3:
-                curuids, uids = uids[:2], uids[2:]
-            else:
-                curuids, uids = uids, []
+        for curuids in draw(uids):
             print(f'Sending to {curuids}')
 
             message = (

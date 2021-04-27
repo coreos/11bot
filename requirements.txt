@@ -1,2 +1,3 @@
+dotted-dict
 slack_sdk
 PyYAML

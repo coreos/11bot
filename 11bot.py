@@ -4,6 +4,7 @@
 
 import argparse
 from datetime import date
+from dotted_dict import DottedDict
 import itertools
 import os
 import random
@@ -79,7 +80,7 @@ def main():
     history_path = os.path.expanduser(args.history)
 
     with open(os.path.expanduser(args.config)) as fh:
-        config = yaml.safe_load(fh)
+        config = DottedDict(yaml.safe_load(fh))
     try:
         with open(history_path) as fh:
             history = yaml.safe_load(fh)
@@ -88,12 +89,12 @@ def main():
 
     token = os.environ.get('ELEVENBOT_TOKEN')
     if not token:
-        token = config['token']
+        token = config.token
     client = WebClient(token=token)
     ok = True
     week = get_week()
     uids = []
-    for p in config['participants']:
+    for p in config.participants:
         if week % p.get('cadence', 1) == 0:
             uids.append(p['uid'])
 
@@ -101,11 +102,11 @@ def main():
         print(f'Sending to {curuids}')
 
         message = (
-            config['message-lonely'],
-            config['message'],
-            config['message-extra'],
+            config.message_lonely,
+            config.message,
+            config.message_extra,
         )[len(curuids) - 1].strip().format(
-            contact=config['contact'],
+            contact=config.contact,
             uids=curuids,
         )
 

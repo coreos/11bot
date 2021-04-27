@@ -13,6 +13,9 @@ env/bin/pip install -r requirements.txt
 crontab -l | cat - crontab.example | crontab -
 ```
 
+Alternatively, a [container image](https://quay.io/repository/bgilbert/11bot)
+is available.
+
 You'll also need to set up a Slack app in your workspace and get an API
 token for it.
 

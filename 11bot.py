@@ -75,8 +75,6 @@ def main():
             help='history file')
     parser.add_argument('-n', '--dry-run', action='store_true',
             help='print messages to stdout rather than sending')
-    parser.add_argument('-s', '--send', metavar='MESSAGE',
-            help='DM the specified message to each participant')
     args = parser.parse_args()
     history_path = os.path.expanduser(args.history)
 
@@ -93,48 +91,37 @@ def main():
         token = config['token']
     client = WebClient(token=token)
     ok = True
-    if args.send:
-        # DM specified message to every user
-        for p in config['participants']:
-            uid = p['uid']
-            print(f'Sending to {uid}')
-            message = args.send
-            if args.dry_run:
-                dry_run(message)
-            else:
-                ok = try_slack_send(client, uid, message) and ok
-    else:
-        week = get_week()
-        uids = []
-        for p in config['participants']:
-            if week % p.get('cadence', 1) == 0:
-                uids.append(p['uid'])
+    week = get_week()
+    uids = []
+    for p in config['participants']:
+        if week % p.get('cadence', 1) == 0:
+            uids.append(p['uid'])
 
-        for curuids in draw(uids, history):
-            print(f'Sending to {curuids}')
+    for curuids in draw(uids, history):
+        print(f'Sending to {curuids}')
 
-            message = (
-                config['message-lonely'],
-                config['message'],
-                config['message-extra'],
-            )[len(curuids) - 1].strip().format(
-                contact=config['contact'],
-                uids=curuids,
-            )
+        message = (
+            config['message-lonely'],
+            config['message'],
+            config['message-extra'],
+        )[len(curuids) - 1].strip().format(
+            contact=config['contact'],
+            uids=curuids,
+        )
 
-            if args.dry_run:
-                dry_run(message)
-            else:
-                ok = try_slack_send(client, curuids, message) and ok
+        if args.dry_run:
+            dry_run(message)
+        else:
+            ok = try_slack_send(client, curuids, message) and ok
 
-        if not args.dry_run:
-            with open(f'{history_path}.tmp', 'w') as fh:
-                try:
-                    os.chmod(fh.fileno(), os.stat(history_path).st_mode)
-                except FileNotFoundError:
-                    pass
-                yaml.safe_dump(history, fh)
-            os.rename(f'{history_path}.tmp', history_path)
+    if not args.dry_run:
+        with open(f'{history_path}.tmp', 'w') as fh:
+            try:
+                os.chmod(fh.fileno(), os.stat(history_path).st_mode)
+            except FileNotFoundError:
+                pass
+            yaml.safe_dump(history, fh)
+        os.rename(f'{history_path}.tmp', history_path)
 
     return 0 if ok else 1
 

@@ -21,21 +21,4 @@ token for it.
 
 ## Config format
 
-Put this in `~/.11bot` by default.
-
-```yaml
-token: <API token>
-contact: <uid>
-message: <message>
-message-extra: <message for 3 participants>
-message-lonely: <message if there's only one participant>
-participants:
-  - uid: <uid>
-    cadence: 2  # optional; weeks
-```
-
-Message substitution variables:
-- `{contact}`: the configured contact UID
-- `{uids[0]}`, `{uids[1]}`, `{uids[2]}`: UIDs we're sending to
-
-Use these in messages as e.g. `<@{contact}>`.
+See [config.example](config.example).  Put this in `~/.11bot` by default.

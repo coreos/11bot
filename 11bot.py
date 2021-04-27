@@ -88,7 +88,10 @@ def main():
     except FileNotFoundError:
         history = {}
 
-    client = WebClient(token=config['token'])
+    token = os.environ.get('ELEVENBOT_TOKEN')
+    if not token:
+        token = config['token']
+    client = WebClient(token=token)
     ok = True
     if args.send:
         # DM specified message to every user

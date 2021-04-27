@@ -1,4 +1,4 @@
-# Slack API token
+# Slack API token (if not specified in ELEVENBOT_TOKEN env var)
 token: TOKEN
 # Contact UID for an administrator
 contact: UID

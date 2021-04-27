@@ -3,6 +3,7 @@
 # Apache 2.0 license
 
 import argparse
+from croniter import croniter
 from datetime import date
 from dotted_dict import DottedDict
 import itertools
@@ -11,6 +12,7 @@ import random
 from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
 import sys
+import time
 import yaml
 
 
@@ -116,6 +118,8 @@ def main():
     parser = argparse.ArgumentParser(description='Send weekly 1:1 invitations.')
     parser.add_argument('-c', '--config', metavar='FILE', default='~/.11bot',
             help='config file')
+    parser.add_argument('-d', '--daemon', metavar='CRONSPEC',
+            help='run periodically according to the cron spec')
     parser.add_argument('-H', '--history', metavar='FILE', default='~/.11bot-history',
             help='history file')
     parser.add_argument('-n', '--dry-run', action='store_true',
@@ -130,8 +134,18 @@ def main():
     config.history_path = os.path.expanduser(args.history)
     config.dry_run = args.dry_run
 
-    ok = do_pairing(config)
-    return 0 if ok else 1
+    if args.daemon:
+        for next in croniter(args.daemon):
+            while True:
+                now = time.clock_gettime(time.CLOCK_REALTIME)
+                if now >= next:
+                    ok = do_pairing(config)
+                    print('====== {}'.format('Success' if ok else 'Failure'))
+                    break
+                time.sleep(next - now)
+    else:
+        ok = do_pairing(config)
+        return 0 if ok else 1
 
 
 if __name__ == '__main__':

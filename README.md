@@ -10,19 +10,10 @@ git clone https://github.com/bgilbert/11bot
 cd 11bot
 virtualenv env
 env/bin/pip install -r requirements.txt
-```
-
-Alternatively, a [container image](https://quay.io/repository/bgilbert/11bot) is available.
-
-Schedule execution with cron:
-```sh
 crontab -l | cat - crontab.example | crontab -
 ```
 
-Or, run in daemon mode:
-```sh
-env/bin/python 11bot.py -d "0 9 * * 1"
-```
+Alternatively, a [container image](https://quay.io/repository/bgilbert/11bot) is available.
 
 You'll also need to set up a Slack app in your workspace and get an API token for it.
 

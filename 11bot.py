@@ -68,29 +68,14 @@ def try_slack_send(client, uids, message):
     return True
 
 
-def main():
-    parser = argparse.ArgumentParser(description='Send weekly 1:1 invitations.')
-    parser.add_argument('-c', '--config', metavar='FILE', default='~/.11bot',
-            help='config file')
-    parser.add_argument('-H', '--history', metavar='FILE', default='~/.11bot-history',
-            help='history file')
-    parser.add_argument('-n', '--dry-run', action='store_true',
-            help='print messages to stdout rather than sending')
-    args = parser.parse_args()
-    history_path = os.path.expanduser(args.history)
-
-    with open(os.path.expanduser(args.config)) as fh:
-        config = DottedDict(yaml.safe_load(fh))
+def do_pairing(config):
     try:
-        with open(history_path) as fh:
+        with open(config.history_path) as fh:
             history = yaml.safe_load(fh)
     except FileNotFoundError:
         history = {}
 
-    token = os.environ.get('ELEVENBOT_TOKEN')
-    if not token:
-        token = config.token
-    client = WebClient(token=token)
+    client = WebClient(token=config.token)
     ok = True
     week = get_week()
     uids = []
@@ -110,20 +95,42 @@ def main():
             uids=curuids,
         )
 
-        if args.dry_run:
+        if config.dry_run:
             dry_run(message)
         else:
             ok = try_slack_send(client, curuids, message) and ok
 
-    if not args.dry_run:
-        with open(f'{history_path}.tmp', 'w') as fh:
+    if not config.dry_run:
+        with open(f'{config.history_path}.tmp', 'w') as fh:
             try:
-                os.chmod(fh.fileno(), os.stat(history_path).st_mode)
+                os.chmod(fh.fileno(), os.stat(config.history_path).st_mode)
             except FileNotFoundError:
                 pass
             yaml.safe_dump(history, fh)
-        os.rename(f'{history_path}.tmp', history_path)
+        os.rename(f'{config.history_path}.tmp', config.history_path)
 
+    return ok
+
+
+def main():
+    parser = argparse.ArgumentParser(description='Send weekly 1:1 invitations.')
+    parser.add_argument('-c', '--config', metavar='FILE', default='~/.11bot',
+            help='config file')
+    parser.add_argument('-H', '--history', metavar='FILE', default='~/.11bot-history',
+            help='history file')
+    parser.add_argument('-n', '--dry-run', action='store_true',
+            help='print messages to stdout rather than sending')
+    args = parser.parse_args()
+
+    with open(os.path.expanduser(args.config)) as fh:
+        config = DottedDict(yaml.safe_load(fh))
+    token = os.environ.get('ELEVENBOT_TOKEN')
+    if token:
+        config.token = token
+    config.history_path = os.path.expanduser(args.history)
+    config.dry_run = args.dry_run
+
+    ok = do_pairing(config)
     return 0 if ok else 1
 
 

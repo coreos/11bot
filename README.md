@@ -6,7 +6,7 @@ A `setup.cfg` would be nice, but we don't have one right now.
 
 ```sh
 cd ~
-git clone https://github.com/bgilbert/11bot
+git clone https://github.com/coreos/11bot
 cd 11bot
 virtualenv env
 env/bin/pip install -r requirements.txt

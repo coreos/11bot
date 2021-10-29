@@ -1,29 +1,20 @@
+# Slack app token for socket-mode event handling
+# (if not specified in ELEVENBOT_APP_TOKEN env var)
+app-token: TOKEN
 # Slack API token (if not specified in ELEVENBOT_TOKEN env var)
 token: TOKEN
-# Contact UID for an administrator
-contact: UID
 
-# Message for 2 participants
-message: |
-  Hi <@{uids[0]}> and <@{uids[1]}>!  You've been paired for a social 1:1 this week.  Go ahead and set up a half-hour call at a time that works for both of you!
+# If specified, ignore everything but the specified channels
+channels-allow: []
+# Ignore the specified channels
+channels-deny: []
 
-  Contact <@{contact}> to unsubscribe.
+# Cron-format time to do the weekly grouping.  Must fire exactly 1x/week.
+weekly-grouping-schedule: "0 4 * * 1"
+# Factor to apply to old cost records every week
+cost-falloff: 0.96
 
-# Message for 3 participants
-message-extra: |
-  Hi <@{uids[0]}>, <@{uids[1]}>, and <@{uids[2]}>!  You've been grouped for a social 1:1:1 this week.  (We have an odd number of participants this time.)  Go ahead and set up a half-hour call at a time that works for each of you!
-
-  Contact <@{contact}> to unsubscribe.
-
-# Message if there's only one participant
-message-lonely: |
-  Hi <@{uids[0]}>!  There's no one else to pair you with this week.  :disappointed:  I'll try again next week.
-
-  Contact <@{contact}> to unsubscribe.
-
-participants:
-  - uid: UID
-  - uid: UID
-  - uid: UID
-    # optional; weeks
-    cadence: 2
+# UIDs of users allowed to run admin commands
+admins:
+  - UID
+  - UID

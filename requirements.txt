@@ -1,3 +1,5 @@
+croniter
 dotted-dict
+requests
 slack_sdk
 PyYAML

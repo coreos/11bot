@@ -262,6 +262,8 @@ class Channel:
         record costs.'''
         grouping = Grouping.minimal_cost(self._db, self.settings.groupsize,
                 self.participants())
+        # First create all the conversations, so we fail cleanly if one fails
+        send = []
         for uids in grouping.groups:
             message = f"Hi {format_uids(uids)}!  "
             if len(uids) == 1:
@@ -270,6 +272,9 @@ class Channel:
                 message += f"You've been grouped for a 1:1 this week.  Use this group chat to discuss timing and details."
             message += f"\n\nType `/11bot leave` in <#{self.id}> to unsubscribe."
             cid = self._client.conversations_open(users=uids)['channel']['id']
+            send.append((cid, message))
+        # Then send messages
+        for cid, message in send:
             self._client.chat_postMessage(channel=cid, text=message)
         grouping.save_cost(self._db)
 

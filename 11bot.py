@@ -817,13 +817,16 @@ class Scheduler:
 
         @report_errors
         def handle_one(_config, channel):
-            if channel.weeks_until_grouping == 0:
-                with self._db:
-                    try:
-                        channel.sync()
-                    except KeyError:
-                        return
-                    channel.group()
+            try:
+                if channel.weeks_until_grouping == 0:
+                    with self._db:
+                        try:
+                            channel.sync()
+                        except KeyError:
+                            return
+                        channel.group()
+            except Exception as e:
+                raise Exception(f"Failed to process channel {channel.id}") from e
         for channel in channels:
             handle_one(self._config, channel)
 

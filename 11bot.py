@@ -51,6 +51,20 @@ def format_uids(uids):
     return ', '.join(uidlist)
 
 
+def open_conversation(client, uids):
+    '''Open a conversation between the specified UIDs and return its ID.
+    Retry a few times.'''
+    tries = 4
+    for retried in range(tries):
+        try:
+            return client.conversations_open(users=uids)['channel']['id']
+        except SlackApiError:
+            if retried < tries - 1:
+                time.sleep(2**retried)
+            else:
+                raise
+
+
 ChannelSettings = namedtuple('ChannelSettings',
         ['seed', 'groupsize', 'interval_weeks'],
         defaults=[None, 2, 1])
@@ -271,7 +285,7 @@ class Channel:
             else:
                 message += f"You've been grouped for a 1:1 this week.  Use this group chat to discuss timing and details."
             message += f"\n\nType `/11bot leave` in <#{self.id}> to unsubscribe."
-            cid = self._client.conversations_open(users=uids)['channel']['id']
+            cid = open_conversation(self._client, uids)
             send.append((cid, message))
         # Then send messages
         for cid, message in send:
@@ -434,7 +448,7 @@ def report_errors(f):
         def send(message):
             try:
                 client = WebClient(token=config.token)
-                channel = client.conversations_open(users=config.admins)['channel']['id']
+                channel = open_conversation(client, config.admins)
                 client.chat_postMessage(channel=channel, text=message)
             except Exception:
                 traceback.print_exc()
